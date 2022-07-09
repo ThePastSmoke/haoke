@@ -10,5 +10,10 @@ module.exports = {
       },
       'vant'
     ]
-  ]
+  ],
+  env: {
+    development: {
+      plugins: ['dynamic-import-webpack']
+    }
+  }
 }

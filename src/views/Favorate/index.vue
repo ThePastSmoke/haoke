@@ -1,15 +1,11 @@
 <template>
-  <div>
-    <div>
-      <headerBar title="地图"></headerBar>
-    </div>
-  </div>
+  <headerBar title="收藏列表"></headerBar>
 </template>
 
 <script>
 import headerBar from '@/components/headerBar.vue'
 export default {
-  name: 'Map',
+  name: 'favorate',
   components: { headerBar }
 }
 </script>

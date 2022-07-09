@@ -15,26 +15,26 @@
       class="search"
     >
       <div slot="label" @click="goCity">
-        北京 <van-icon name="arrow-down" />
+        {{ cityName || '北京' }} <van-icon name="arrow-down" />
       </div>
       <!-- <div slot="left-icon"><van-icon name="arrow-down" /></div> -->
       <template #action>
         <div class="icon">
-          <van-icon name="map-marked" @click="goMap" />
+          <van-icon name="map-marked" @click="$router.push('/map')" />
         </div>
       </template>
     </van-search>
     <!-- 字体图标 -->
     <div class="bar">
-      <div @click="goList">
+      <div @click="$router.push('/list')">
         <van-icon name="wap-home-o" class="icon" />
         <p class="text">整租</p>
       </div>
-      <div @click="goList">
+      <div @click="$router.push('/list')">
         <van-icon name="friends-o" class="icon" />
         <p class="text">合租</p>
       </div>
-      <div @click="goMap">
+      <div @click="$router.push('/map')">
         <van-icon name="map-marked" class="icon" />
         <p class="text">地图找房</p>
       </div>
@@ -70,7 +70,8 @@ export default {
     return {
       images: [],
       groups: [],
-      value: ''
+      value: '',
+      cityName: this.$route.query.cityName // 传来的参数确定城市
     }
   },
   created() {
@@ -90,19 +91,12 @@ export default {
       const res = await getGroups()
       this.groups = res.data.body
     },
-    goMap() {
-      this.$router.push({
-        path: '/map'
-      })
-    },
-    goList() {
-      this.$router.push({
-        path: '/home/list'
-      })
-    },
     goCity() {
       this.$router.push({
-        path: '/home/city'
+        path: '/city',
+        query: {
+          id: 1
+        }
       })
     }
   }
@@ -159,18 +153,19 @@ export default {
   width: 100%;
   height: 250px;
   background-color: #f6f5f6;
-  /deep/.van-cell {
+  :deep(.van-cell) {
     background-color: #f6f5f6;
   }
-  /deep/.van-grid-item__content {
-    width: 170px;
+
+  :deep(.van-grid-item__content) {
+    width: 172px;
     height: 80px;
     margin-top: 7px;
   }
-  /deep/.groups {
+  :deep(.groups) {
     font-size: 14px;
   }
-  /deep/.van-icon__image {
+  :deep(.van-icon__image) {
     width: 50px;
     height: 50px;
     margin-right: 10px;

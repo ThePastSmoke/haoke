@@ -2,6 +2,8 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from '@/router'
 import vant from '@/plugins/vant'
+// 引入适配文件
+import 'amfe-flexible'
 // 引入初始化css
 import '@/style/reset.css'
 Vue.use(vant)

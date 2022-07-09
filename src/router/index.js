@@ -25,10 +25,6 @@ const routes = [
       {
         path: '/home/profile',
         component: () => import('@/views/Profile')
-      },
-      {
-        path: '/home/city',
-        component: () => import('@/views/City')
       }
     ]
   },
@@ -39,6 +35,18 @@ const routes = [
   {
     path: '/login',
     component: () => import('@/views/Login')
+  },
+  {
+    path: '/registe',
+    component: () => import('@/views/Registe')
+  },
+  {
+    path: '/favorate',
+    component: () => import('@/views/Favorate')
+  },
+  {
+    path: '/city',
+    component: () => import('@/views/City')
   }
 ]
 
