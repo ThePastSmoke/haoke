@@ -47,6 +47,22 @@ const routes = [
   {
     path: '/city',
     component: () => import('@/views/City')
+  },
+  {
+    path: '/detall',
+    component: () => import('@/views/Detail')
+  },
+  {
+    path: '/ren',
+    component: () => import('@/views/rent')
+  },
+  {
+    path: '/ren/add',
+    component: () => import('@/views/renAdd')
+  },
+  {
+    path: '/ren/search',
+    component: () => import('@/views/renSearch')
   }
 ]
 

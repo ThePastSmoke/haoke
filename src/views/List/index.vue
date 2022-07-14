@@ -10,7 +10,7 @@
         class="search"
       >
         <div slot="label" @click="$router.push('/city')">
-          {{ record }} <van-icon name="arrow-down" />
+          {{ $store.state.city.cityName }} <van-icon name="arrow-down" />
         </div>
         <span slot="left" @click="$router.push('/home')">
           <van-icon name="arrow-left" />
@@ -97,65 +97,27 @@
           </van-dropdown-menu>
         </div>
         <!-- 后一个tabbar -->
-        <div class="main_TabBarLastOne">
-          <!-- 筛选 -->
-          <van-cell is-link @click="showPopup" arrow-direction="down"
-            >筛选
-          </van-cell>
-          <van-popup
-            v-model="isShow"
-            position="right"
-            get-container=".van-dropdown-menu__bar"
-            :close-on-click-overlay="true"
-            close-icon-position="bottom-right"
-            @click-close-icon="close_box"
-          >
-            <div class="filter_btn">
-              <van-button type="default" size="large">取消</van-button>
-              <van-button type="primary" size="large">确定</van-button>
-            </div>
-          </van-popup>
-        </div>
+        <FilterItem
+          @get_Filter_Home="get_Filter_Home"
+          :queryData="queryData"
+          :homeTerm="homeTerm"
+        ></FilterItem>
       </div>
     </div>
     <!-- 列表 -->
-    <div class="main_list">
-      <van-card
-        v-for="(item, index) in list"
-        :key="index"
-        currency=""
-        :desc="item.desc"
-        :title="item.title"
-        :thumb="baseUrl + item.houseImg"
-      >
-        <template #price>
-          <span class="van-card__bottom"> {{ item.price }} </span>
-          <span class="yuan">元/月</span>
-        </template>
-        <template #tags>
-          <van-tag
-            plain
-            type="danger"
-            class="HouseItem_tag1__3VDnD HouseItem_tag__3MxYv"
-            v-for="(val, i) in item.tags"
-            :key="i"
-          >
-            {{ val }}
-          </van-tag>
-        </template>
-      </van-card>
-    </div>
+    <HomeList :list="list"></HomeList>
   </div>
 </template>
 
 <script>
 import { getList, getHotCity, getCitySon } from '@/Api'
+import FilterItem from '@/views/List/components/filter_item.vue'
+import HomeList from '@/views/List/components/home_List.vue'
 export default {
   name: 'List',
-
+  components: { FilterItem, HomeList },
   data() {
     return {
-      isShow: false,
       city_list1: 110000,
       city_list2: 120000,
       city_list3: 100000,
@@ -188,12 +150,11 @@ export default {
       areaList3: {
         province_list: {}
       },
-      baseUrl: 'http://liufusong.top:8080',
       value: '', // 下拉菜单绑定的
       list: [],
       record: this.$route.query.cityName || '北京', // 记录传参的城市
       hotCity: [], // 热门城市数据
-      homeTerm: '', // 房屋查选请求回的数据
+      homeTerm: {}, // 房屋查选请求回的数据
       checkData: [], // 点击确定后获取的数据
       // 查询具体参数
       queryData: {
@@ -202,8 +163,11 @@ export default {
         subway: null, // 地铁id
         stat: 1, // 开始请求的数据
         end: 20, // 结束请求的数据
+        rentType: null, // 房屋类型
+        price: null, // 价格
         roomType: null, // 房屋类型
-        price: null // 价格
+        characteristic: null, // 标签
+        floor: null // 楼层
       }
     }
   },
@@ -212,12 +176,13 @@ export default {
   },
 
   methods: {
-    // 展示弹出层
-    showPopup() {
-      this.isShow = true
-    },
     // 请求热门城市/子级城市
     async getHotCity() {
+      const toast1 = this.$toast.loading({
+        duration: 0, // 持续展示 toast
+        forbidClick: true,
+        message: '加载中...'
+      })
       const resHotCity = await getHotCity()
       this.hotCity = resHotCity.data.body
       // 筛选城市id
@@ -227,6 +192,12 @@ export default {
           newcity = item.value
         }
       })
+      // 当前城市数据和code存入vuex中
+      this.$store.commit('city', {
+        cityName: this.record,
+        cityCode: newcity
+      })
+      // console.log(this.$store.state.city.cityName)
       this.queryData.cityId = newcity
       // 请求不同城市的列表
       const resList = await getList(newcity)
@@ -258,6 +229,7 @@ export default {
       for (const item of this.homeTerm.price) {
         this.areaList3.province_list[this.city_list3++] = item.label
       }
+      toast1.clear()
     },
 
     // 调用组件事件获取选中信息
@@ -266,6 +238,11 @@ export default {
     },
     // 获取请求数据的id
     async queryHome() {
+      const toast2 = this.$toast.loading({
+        duration: 0, // 持续展示 toast
+        forbidClick: true,
+        message: '加载中...'
+      })
       document.querySelector('.main_list').click()
       // 手动调用确定点击按钮
       document.querySelector('.van-picker__confirm').click()
@@ -290,7 +267,7 @@ export default {
           this.queryData.subway,
           this.queryData.stat,
           this.queryData.end,
-          this.queryData.roomType,
+          this.queryData.rentType,
           this.queryData.price
         )
         console.log(res)
@@ -313,7 +290,7 @@ export default {
           this.queryData.subway,
           this.queryData.stat,
           this.queryData.end,
-          this.queryData.roomType,
+          this.queryData.rentType,
           this.queryData.price
         )
         console.log(res)
@@ -322,10 +299,13 @@ export default {
       // 请求成功后把数据重置为null方便下次请求没有冲突
       this.queryData.area = null
       this.queryData.subway = null
+      toast2.clear()
     },
-    // 点击关闭筛选关闭按钮触发
-    close_box() {
-      document.querySelector('.van-overlay').click()
+
+    // 拿到筛选后的数据重新渲染
+    get_Filter_Home(res) {
+      this.list = res
+      console.log(res)
     }
   }
 }
@@ -338,66 +318,11 @@ export default {
     margin-right: 10px;
     color: #fff;
   }
-}
-
-.van-card {
-  height: 120px;
-  position: relative;
-  box-sizing: border-box;
-  justify-content: space-around;
-  padding-top: 18px;
-  border-bottom: 1px solid #e5e5e5;
-  :deep(.van-image__img) {
-    float: left;
-    width: 106px;
-    height: 80px;
-  }
-  :deep(.van-card__title, .van-card__desc) {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    vertical-align: middle;
-  }
-  .van-card__title {
-    font-weight: 700;
-    margin: 0;
-    font-size: 15px;
-    color: #394043;
-  }
-  .van-card__desc {
+  .van-icon-arrow-down {
+    margin-left: 2px;
     font-size: 12px;
-    color: #afb2b3;
+    color: #7f7f80;
   }
-  .HouseItem_tag1__3VDnD {
-    color: #39becd;
-    background: #e1f5f8;
-  }
-  .HouseItem_tag__3MxYv {
-    display: inline-block;
-    font-size: 12px;
-    border-radius: 3px;
-    padding: 4px 5px;
-    margin-right: 5px;
-    line-height: 12px;
-  }
-  /deep/.van-card__bottom {
-    font-size: 16px;
-    color: #fa5741;
-    font-size: 16px;
-    font-weight: bolder;
-  }
-  .van-card__content {
-    overflow: hidden;
-    line-height: 22px;
-    padding-left: 12px;
-  }
-  .yuan {
-    color: red;
-    font-size: 12px;
-  }
-}
-.main_list {
-  margin-bottom: 50px;
 }
 
 .search_but {
@@ -435,8 +360,6 @@ export default {
   width: 80%;
   background-color: #fff;
   .filter_btn {
-    position: fixed;
-    bottom: 0;
     width: 100%;
     display: flex;
     .van-button--default {
@@ -445,6 +368,9 @@ export default {
     .van-button--primary {
       flex: 2;
     }
+  }
+  .van-grid-item {
+    margin-top: 10px;
   }
 }
 </style>

@@ -23,7 +23,9 @@ import {
   Card,
   Tag,
   Area,
-  Popup
+  Popup,
+  Picker,
+  Uploader
 } from 'vant'
 
 const elements = [
@@ -51,7 +53,9 @@ const elements = [
   Card,
   Tag,
   Area,
-  Popup
+  Popup,
+  Picker,
+  Uploader
 ]
 export default function (Vue) {
   elements.forEach((item) => {

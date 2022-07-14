@@ -1,6 +1,18 @@
 import axios from '@/utils/qeuest'
 // 根据条件查选房屋
-export const getList = (cityId, area, subway, stat, end, roomType, price) => {
+export const getList = (
+  cityId,
+  area,
+  subway,
+  stat,
+  end,
+  rentType,
+  price,
+  roomType,
+  oriented,
+  characteristic,
+  floor
+) => {
   return axios({
     url: '/houses',
     params: {
@@ -9,8 +21,52 @@ export const getList = (cityId, area, subway, stat, end, roomType, price) => {
       subway, // 地铁id
       stat, // 请求开始的数据
       end, // 请求结束的数据
-      roomType, // 房屋类型 整租true 合租true
-      price // 价格
+      rentType, // 房屋类型 整租true 合租true
+      price, // 价格
+      roomType, // 房屋类型
+      oriented, // 房屋朝向
+      characteristic, // 标签
+      floor // 楼层
+    }
+  })
+}
+// 获取筛选后的列表
+export const gteFilterList = (
+  cityId,
+  stat,
+  end,
+  // roomType,
+  // oriented,
+  // characteristic,
+  // floor
+  more
+) => {
+  return axios({
+    url: '/houses',
+    params: {
+      cityId, // 城市id
+      stat, // 请求开始的数据
+      end, // 请求结束的数据
+      // roomType, // 房屋类型
+      // oriented, // 房屋朝向
+      // characteristic, // 标签
+      // floor // 楼层
+      more
+    }
+  })
+}
+
+/*
+ **  地图里获取具体房屋
+ */
+
+export const getmapHome = (cityId, area) => {
+  return axios({
+    method: 'GET',
+    url: '/houses',
+    params: {
+      cityId,
+      area
     }
   })
 }

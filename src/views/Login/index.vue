@@ -83,12 +83,12 @@ export default {
       const res = await getLogin(this.username, this.password)
       if (res.data.status === 200) {
         localStorage.setItem('HKZF_TOKEN', JSON.stringify(res.data.body.token))
-        this.$toast(res.data.description)
+        this.$toast(res?.data?.description)
         this.$router.push({
           path: '/home/profile'
         })
       } else {
-        this.$toast(res.data.description)
+        this.$toast(res?.data?.description)
       }
     }
   }

@@ -107,6 +107,10 @@ export default {
     },
     // 获取热门城市的名称
     getCityName(name) {
+      this.$store.commit('city', {
+        name: name.label,
+        cityName: name.value
+      })
       this.cityName = name.label // 存入热门城市
       if (this.record === '1') {
         this.$router.push({

@@ -33,15 +33,17 @@ export default {
   width: 100%;
   height: 45px;
   background-color: #21b97a;
-  display: flex;
+  text-align: center;
+  position: relative;
 }
+
 .van-icon-arrow-left {
+  position: absolute;
+  top: 0;
+  left: 0;
   line-height: 45px;
 }
 .van-icon {
   margin-left: 10px;
-}
-span {
-  margin-left: 35%;
 }
 </style>

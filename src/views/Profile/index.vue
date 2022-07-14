@@ -24,7 +24,7 @@
         </div>
         <!-- 选项 -->
         <div class="banner">
-          <div @click="goRegiste">
+          <div>
             <van-icon name="star-o" />
             <p>我的收藏</p>
           </div>
@@ -71,11 +71,11 @@
         </div>
         <!-- 选项 -->
         <div class="banner" style="margin-top: 0px">
-          <div @click="goRegiste">
+          <div @click="$router.push({ path: '/favorate' })">
             <van-icon name="star-o" />
             <p>我的收藏</p>
           </div>
-          <div>
+          <div @click="$router.push({ path: '/ren' })">
             <van-icon name="home-o" />
             <p>我的出租</p>
           </div>
@@ -134,11 +134,7 @@ export default {
         path: '/login'
       })
     },
-    // 跳转到收藏
-    goRegiste() {
-      console.log(1)
-      this.$router.push({ path: '/favorate' })
-    },
+
     // 获取用户个人信息
     async getUserInfo() {
       const res = await getUserInfo(this.token)
@@ -173,7 +169,7 @@ export default {
 }
 .my_login {
   text-align: center;
-  position: fixed;
+  position: absolute;
   top: 133px;
   left: 28px;
   width: 85%;
@@ -185,7 +181,7 @@ export default {
     height: 80px;
     background-color: #f1f1ef;
     border-radius: 50%;
-    position: fixed;
+    position: absolute;
     left: 50%;
     transform: translateX(-50%);
     margin-top: -35px;
